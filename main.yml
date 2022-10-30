@@ -189,15 +189,17 @@ Resources:
         config:
           packages: 
             yum:
-              ruby: []
+             ruby: []
+              #wget: []
+              #unzip: []
           files:
             /home/ec2-user/install:
               source: !Sub "https://aws-codedeploy-${AWS::Region}.s3.amazonaws.com/latest/install"
               mode: "000755" # executable
-            commands:
-              00-install-cd-agent:
-                command: "./install auto"
-                cwd: "/home/ec2-user/"
+          commands:
+            00-install-cd-agent:
+              command: "./install auto"
+              cwd: "/home/ec2-user/"
     Properties:
       ImageId: !Ref EC2AMI
       InstanceType: !Ref EC2InstanceType
@@ -232,13 +234,25 @@ Resources:
             nvm install v12.7.0
             nvm use v12.7.0
 
+            # Download latest code, unzip it into /home/ec2-user/app
+            #wget https://github.com/{{username}}/aws-bootstrap/archive/master.zip 
+            #unzip master.zip
+            #mv aws-bootstrap-master app
+
             # Create log directory
             mkdir -p /home/ec2-user/app/logs
+
+            # Run server
+            #cd app
+            #npm install
+            #npm start
           EOF
 
           chown ec2-user:ec2-user /tmp/install_script.sh && chmod a+x /tmp/install_script.sh
-          sleep 1; su - ec2-user -c "/tmp/install_script.sh" 
+          sleep 1; sudo su - ec2-user -c "/tmp/install_script.sh" 
 
+          # Have CloudFormation install any files and packages from the metadata
+          /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --region ${AWS::Region} --resource Instance
           # Signal to CloudFormation that the instance is ready
           /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --region ${AWS::Region} --resource Instance 
           
@@ -252,4 +266,3 @@ Outputs:
     Value: !Sub "http://${Instance.PublicDnsName}:8080" 
     Export:
       Name: InstanceEndpoint
-
