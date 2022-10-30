@@ -1,5 +1,9 @@
 #!/bin/bash
 
+STACK_NAME=awsbootstrap
+REGION=eu-central-1
+CLI_PROFILE=awsbootstrap
+
 GH_ACCESS_TOKEN=$(cat ~/.github/aws-bootstrap-access-token)
 GH_OWNER=$(cat ~/.github/aws-bootstrap-owner)
 GH_REPO=$(cat ~/.github/aws-bootstrap-repo)
@@ -20,10 +24,6 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
     CodePipelineBucket=$CODEPIPELINE_BUCKET
-
-STACK_NAME=awsbootstrap 
-REGION=eu-central-1 
-CLI_PROFILE=awsbootstrap
 
 EC2_INSTANCE_TYPE=t2.micro
 
