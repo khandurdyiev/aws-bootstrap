@@ -1,5 +1,6 @@
 #!/bin/bash
 
+DOMAIN=flocky.link
 STACK_NAME=awsbootstrap
 REGION=eu-central-1
 CLI_PROFILE=awsbootstrap
@@ -51,7 +52,7 @@ fi
 
 
 # Deploy the CloudFormation template
-echo "\n\n=========== Deploying main.yml ==========="
+echo -e "\n\n=========== Deploying main.yml ==========="
 aws cloudformation deploy \
   --region $REGION \
   --profile $CLI_PROFILE \
@@ -61,6 +62,7 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
     EC2InstanceType=$EC2_INSTANCE_TYPE \
+    Domain=$DOMAIN \
     GitHubOwner=$GH_OWNER \
     GitHubRepo=$GH_REPO \
     GitHubBranch=$GH_BRANCH \
